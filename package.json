@@ -1,0 +1,35 @@
+{
+  "name": "klap-docs",
+  "private": true,
+  "license": "MIT",
+  "description": "Klap unified docs — API reference, Node.js SDK, and @klappay/types, merged by resource.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/klappay/klap-docs.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "@braintree/sanitize-url": "^7.1.2",
+    "cytoscape": "^3.33.3",
+    "cytoscape-cose-bilkent": "^4.1.0",
+    "dayjs": "^1.11.20",
+    "mermaid": "^11.16.0",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-llms": "^1.13.4",
+    "vitepress-plugin-mermaid": "^2.0.17"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

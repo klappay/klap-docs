@@ -1,0 +1,8 @@
+node_modules
+.vitepress/cache
+.vitepress/dist
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
