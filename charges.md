@@ -57,17 +57,19 @@ payer-side delay on top of that.
 
 `acceptedPayments` lets the payer choose which rail to actually use —
 at least one `(token, network)` pair, up to 18 (2 tokens × 9 operational
-networks, the real ceiling of distinct pairs rather than a round number —
-it grows when a network is added). Every transfer on an
+networks — the schema's ceiling of distinct pairs, which grows when a
+network is added; fewer are actually payable in any one environment,
+see below). Every transfer on an
 accepted pair is credited and sums toward the charge total —
 `charge.paidWith` is an array of every distinct pair that has actually
 contributed so far (empty until the first one arrives), so a charge
 accepting both USDC and USDT can be confirmed by, say, $9 in USDC plus
 $1 in USDT. A transfer on a pair that isn't in `acceptedPayments` is
 still recorded but never credited. `token`/`network`/`environment`
-combinations without a deployed contract are rejected at creation
+combinations that aren't currently payable are rejected at creation
 (`422 token_not_supported`, naming the first bad pair) — not every
-token is deployed everywhere yet (see [Networks & tokens](/networks)
+token is available on every network and environment, and `tron`
+currently accepts no payments at all (see [Networks & tokens](/networks)
 for the live matrix; call `GET /networks` instead of hardcoding pairs
 client-side).
 
@@ -293,6 +295,9 @@ webhook's `data` for a `charge.*` event):
 
 | Field | Notes |
 |---|---|
+| `id` | Klap-generated id (`ch_...`). |
+| `currency` | Always `USD` today — the only supported currency. |
+| `feePayer` / `feePercent` / `feeAmount` / `merchantAmount` | Who covers Klap's fee (`'merchant'` default, or `'payer'`), the fee percent frozen at creation, `amount * feePercent / 100`, and `amount - feeAmount` — what you net once the payout settles. |
 | `amount` | The requested target, set at creation, never changes. A legacy JSON number — see [Exact amounts](#exact-amounts) before doing arithmetic with it. |
 | `amountExact` | `amount` as a decimal string (up to 6 fractional digits, no scientific notation). Optional for compatibility with older API versions. |
 | `acceptedPayments` | Echoes exactly what was configured at creation; never changes afterward. |
@@ -304,11 +309,16 @@ webhook's `data` for a `charge.*` event):
 | `status` | Payment progress from the payer's side only: `pending` → `partially_paid`/`confirmed` → (if it never fully pays) `expired`/`underpaid`. Every status is reached automatically — there's no merchant-initiated cancellation. |
 | `settlementStatus` | `'pending' \| 'completed' \| 'failed' \| null`. A **separate** step from `status` — `status: confirmed` means the transfer was detected on-chain; `settlementStatus: completed` means the merchant's wallet actually has the funds. `null` means no payout has been attempted yet. |
 | `settledAt` | When `settlementStatus` first reached `completed`. `null` otherwise. |
-| `environment` | `live` or `test`, matching the API key used. `live` settles on Base mainnet; `test` settles on Base Sepolia — real on-chain activity, never real money. |
+| `environment` | `live` or `test`, matching the API key used. `test` runs on each network's testnet where one exists (see [Networks & tokens](/networks)) — real on-chain activity, never real money. |
 | `address` | The on-chain address the payer sends to, identical no matter which accepted pair they use. Predicted at creation; funds sent here go directly to the merchant. |
 | `checkoutUrl` | Klap's hosted checkout page for this charge, if configured for your deployment. `null` otherwise — build your own UI from `address`/`acceptedPayments`. |
 | `splitRecipients` | The resolved split, one `{ address, percent, label? }` per entry (`address`, not the `recipientId` you submitted). `[]` when none — see [`splitRecipients`](#splitrecipients). |
 | `swapAlternatives` | The `{ token, network }` pairs a payer can pay with *instead* of an accepted token, via [swap-to-pay](#paying-with-another-token-swap-to-pay). Always `[]` on a `test` charge. |
+| `txHash` | Hash of the most recent transfer detected for this charge. `null` until one is detected. |
+| `externalRef` / `source` / `metadata` / `redirectUrl` | Echo whatever you set at creation; `null` when unset. |
+| `apiKeyId` | Which of your API keys created the charge. `null` for charges created before this field existed. |
+| `createdAt` / `expiresAt` / `confirmedAt` / `lastActivityAt` | ISO timestamps. `confirmedAt` is `null` until `status` first reaches `confirmed`; `lastActivityAt` is when a transfer was last credited (or `createdAt` if none yet). |
+| `escrow` | `{ releaserAddress, releasedAt, refundedAt }` on an escrow charge, `null` otherwise — see [Holding funds with escrow](#holding-funds-with-escrow). |
 
 ### Exact amounts
 
@@ -692,7 +702,7 @@ const refunded = await klap.charges.refund('ch_abc123', {
 :::
 
 `signature` must be a valid Safe transaction signature from the charge's
-`escrowReleaserAddress`, authorizing a transfer of the escrow's **full
+`escrow.releaserAddress`, authorizing a transfer of the escrow's **full
 live balance** — the amount actually received, not whatever was fixed at
 creation, since under- and overpayment both change it. The Safe contract
 verifies the signature on-chain before anything moves; Klap never
@@ -700,7 +710,23 @@ takes it on faith and holds no key that could move the funds on its own.
 
 Both require the `charges:write` scope. The second call always loses:
 whichever ran first rejects the other with `409
-escrow_already_released` or `409 escrow_already_refunded`. A completed
+escrow_already_released` or `409 escrow_already_refunded`. Other
+failures to handle:
+
+- `400 escrow_invalid_signature` — the signature doesn't authorize this
+  transfer from `escrow.releaserAddress`.
+- `409 escrow_release_in_progress` / `escrow_refund_in_progress` —
+  another request for the same charge is still being processed; safe to
+  retry shortly.
+- `422 escrow_not_configured` (not an escrow charge),
+  `escrow_nothing_to_release` / `escrow_nothing_to_refund` (zero
+  balance), or `escrow_multiple_payment_pairs` (the payer paid across
+  more than one `(token, network)` pair, which escrow doesn't support).
+- `503 rpc_unavailable` or `503 payment_temporarily_unavailable` —
+  transient; retry later (see [Payment temporarily
+  unavailable](#payment-temporarily-unavailable)).
+
+A completed
 release fires `charge.escrow_released`, a completed refund fires
 `charge.escrow_refunded` — see [Webhooks](/webhooks).
 

@@ -40,7 +40,7 @@ repeat across the API:
 | `missing_api_key` / `invalid_api_key` | No `Authorization` header, or the key doesn't parse/verify. |
 | `insufficient_scope` | The key is valid but missing the scope the endpoint needs (e.g. `charges:write`) — see [Authentication](/authentication). |
 | `invalid_cursor` | A pagination `cursor` that wasn't returned verbatim from a previous response. |
-| `rate_limited` | Exceeded a per-route rate limit (e.g. 20 req/min on `/distributions/*` and `/metrics/*`). |
+| `rate_limited` | Exceeded a rate limit (e.g. 20 req/min on `/distributions/*`, 60 req/min on `/metrics/*`). |
 | `charge_not_found` / `webhook_not_found` / `delivery_not_found` | The `{id}` in the path doesn't exist (or doesn't belong to your organization). |
 | `recipient_not_found` | A `DELETE`/`PATCH /recipients/{id}` on an id that doesn't exist for your organization and environment — or one that's payout-eligible when the key lacks `recipients:manage_payout`. A second `DELETE` returns it too — see [Recipients](/recipients#revoking-a-recipient). |
 | `recipient_not_found_in_split` | A `splitRecipients[].recipientId` on `POST /charges` didn't resolve (wrong id, wrong environment, or revoked) — see [`splitRecipients`](/charges#splitrecipients). |
@@ -69,14 +69,14 @@ first — all fixed per-minute windows:
   the same IP (a shared NAT, a proxy) share this budget.
 - **100 requests/minute per organization**, also per IP-limit-independent,
   for every authenticated route (`/charges`, `/webhooks`, `/sandbox`,
-  `/distributions`, `/networks`, `/metrics`) — this is the one that
+  `/distributions`, `/networks`, `/metrics`, `/recipients`) — this is the one that
   actually matters once you're past initial integration, since it
   follows your tenant regardless of which key or IP is calling.
-- **`/distributions/*` and `/metrics/*` additionally get a tighter 20
-  requests/minute *per source IP*** — not per tenant, so it's the
-  first thing you'll hit if you're polling either of these routes on a
-  tight loop from a single machine, well before the 100/min tenant
-  limit above even comes into play.
+- **`/distributions/*` additionally gets a tighter 20 requests/minute,
+  and `/metrics/*` 60 requests/minute**, both per organization — so
+  they're the first thing you'll hit if you're polling either route on
+  a tight loop, well before the 100/min organization limit above even
+  comes into play.
 
 There's **no `X-RateLimit-Remaining`-style header** on any response today
 — nothing to poll to see how close you are before hitting `429`. The only
@@ -165,8 +165,8 @@ Thrown immediately, client-side, when you call a method that needs an
 ## Health check
 
 `GET /health` — unauthenticated, for uptime monitoring. `status`
-mirrors the HTTP status code (`error` and `503` together when a
-dependency check fails), so a plain status-code-only check still catches
+mirrors the HTTP status code (`error` and `503` together when the
+database check fails), so a plain status-code-only check still catches
 an outage without inspecting the JSON body.
 
 ```bash

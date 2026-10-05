@@ -57,8 +57,10 @@ by anyone, not a privileged Klap-only action.
 Klap watches on-chain activity and
 updates `charge.status` as transfers arrive — `pending` →
 `partially_paid`/`confirmed`, or `expired`/`underpaid` if the deadline
-passes first. This is usually fast enough that `confirmed` is
-observable within the same block the transfer landed in. See
+passes first. A transfer is credited once it reaches the network's
+required confirmation depth — seconds on most networks, longer on
+Ethereum — and the `confirmation_progress` stream event reports how far
+along it is in the meantime. See
 [Charges](/charges) for the full state machine and
 [Real-time status](/realtime) for how to observe it without polling.
 

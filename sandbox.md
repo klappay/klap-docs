@@ -2,8 +2,8 @@
 
 Test your integration end to end — any charge state transition, any
 webhook, any partial/over/underpayment scenario — without waiting for a
-real on-chain transfer or a real block time. Base Sepolia (the testnet
-`test`-environment charges actually settle on) still takes real block
+real on-chain transfer or a real block time. The testnets
+`test`-environment charges actually settle on still take real block
 time to confirm a real transfer; sandbox triggers skip that entirely,
 pushing a charge straight to the target state and dispatching the exact
 webhook/SSE update a real payment would have produced.
@@ -87,13 +87,17 @@ it, matching what a real overpayment does on-chain. This is the only
 sandbox trigger endpoint: webhook-delivery-health events
 (`webhook.delivery_failed`, etc.) are derived from real delivery
 attempts and have no simulated trigger of their own, and there's no
-trigger for `charge.created` — a charge already exists by the time you
-have an id to trigger against. A charge id that doesn't exist (or
+trigger for `charge.created` (a charge already exists by the time you
+have an id to trigger against) or for `charge.escrow_released`/
+`charge.escrow_refunded` — those are reached by actually calling
+[release or refund](/charges#releasing-or-refunding-an-escrow) on a
+`test`-environment escrow charge. A charge id that doesn't exist (or
 belongs to a different organization) is `404 charge_not_found`.
 
 On the types side, the request body is `SandboxTriggerSchema` /
 `TriggerableChargeEvent` (`@klappay/types`) — `event` is derived with
-`.exclude(['charge.created'])` from the same charge-event enum
+`.exclude(['charge.created', 'charge.escrow_released',
+'charge.escrow_refunded'])` from the same charge-event enum
 [Webhooks](/webhooks) documents, not a second hand-maintained list, so a
 future charge event added there is automatically included here with no
 second place to remember to update:

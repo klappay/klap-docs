@@ -62,7 +62,7 @@ const page = await klap.distributions.list({ limit: 20 })
 [→ Try `GET /distributions/pending` in the API Playground](https://api.klappay.com/#tag/distributions/GET/distributions/pending)
 
 `GET /distributions/pending` — query params `limit` (1–100, default
-20) and `cursor`. Rate limited to 20 requests/min per IP, same as the
+20) and `cursor`. Rate limited to 20 requests/min per organization, same as the
 events endpoint below (both share the `/v1/distributions/*` bucket) —
 a keeper polling this on a tight loop instead of using the event
 stream will hit `429 rate_limited` quickly, which is itself a nudge
@@ -155,7 +155,7 @@ the calling key's own environment. See [Real-time (SSE)](/realtime)
 for the general stream mechanics (heartbeat, close conditions, why SSE
 over polling) shared with `GET /charges/{id}/events` and
 `GET /webhooks/listen` — this section covers only what's specific to
-distributions. Rate limited to 20 requests/min per IP for the initial
+distributions. Rate limited to 20 requests/min per organization for the initial
 connection (same bucket as the listing endpoint above); once
 connected, a separate cap of 503 `sse_capacity` applies if too many
 concurrent streams are already open — see [Real-time](/realtime)'s

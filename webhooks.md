@@ -2,7 +2,7 @@
 
 Outbound notifications — Klap pushes events to a URL you register,
 instead of you polling for state changes. Every event belongs to
-exactly one of two categories: **`payments`**, the 8 events that track a
+exactly one of two categories: **`payments`**, the 10 events that track a
 charge through its lifecycle, and **`webhooks`**, 3 meta-events about
 the health of your own webhook endpoint (so you can notice a broken
 integration without polling `GET /webhooks/{id}/deliveries` yourself).
@@ -73,7 +73,7 @@ await klap.webhooks.create({ url, eventCategories: ['payments'] })
 await klap.webhooks.create({ url, events: ['*'], excludeEvents: ['charge.expired'] })
 ```
 
-- **`events`** — up to 12 individual event types, or `"*"` for every
+- **`events`** — any of the 13 individual event types, or `"*"` for every
   event (combine with `excludeEvents` to opt back out of specific ones
   under the wildcard).
 - **`eventCategories`** — up to 2 (`'payments'` and/or `'webhooks'`).

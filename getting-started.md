@@ -8,7 +8,7 @@ balance. Two things you need before your first request:
   dashboard at [app.klappay.com](https://app.klappay.com). Keys aren't
   self-serve through the API itself — creating one is a dashboard
   action, done once per environment: `klap_live_...` for production, or
-  `klap_test_...` to run against a real testnet (Base Sepolia) with no
+  `klap_test_...` to run against real testnets (Base Sepolia and others) with no
   real money at risk. See [Authentication](/authentication) for how a
   key is scoped and what it's allowed to do; the short version, used
   everywhere below, is `Authorization: Bearer klap_live_...`.

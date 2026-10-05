@@ -51,7 +51,8 @@ const health = await klap.health.check()
 
 :::
 
-An invalid, malformed, or revoked key gets `401 invalid_api_key`. A
+A request with no key at all gets `401 missing_api_key`; an invalid,
+malformed, or revoked key gets `401 invalid_api_key`. A
 key that's valid but lacks a scope a route requires gets a separate
 `403 insufficient_scope` instead — two different failure classes worth
 branching on separately in your own error handling: the first means
@@ -141,16 +142,18 @@ publishable token.
 ## Environments
 
 The prefix on the key — `klap_live_` or `klap_test_` — is the *only*
-thing that determines which environment a request runs against. There
-is no `environment` field to pass on the request body or as a query
-param, and no single key that can act as both: a `live` key and a
+thing that determines which environment a request runs against. A few
+read endpoints (`GET /charges`, `POST /metrics/query`) accept an
+`environment` filter, but it can only ever match the key's own
+environment — anything else is `422 environment_mismatch`, never a way
+to switch. There's no single key that can act as both: a `live` key and a
 `test` key are two distinct keys, not one key with a switchable mode.
 
 - A `test` key can only ever read or write `test`-environment
   charges/webhooks — never a `live` one, even under the same account.
-  Calling a `live`-only route, or reaching for a `live` charge's id
-  with a `test` key, fails the same way a wrong-tenant request would,
-  not with a special "wrong environment" error.
+  Reaching for a `live` charge's id with a `test` key fails the same
+  way a wrong-tenant request would (`404`), not with a special "wrong
+  environment" error.
 - `test` keys unlock [Sandbox](/sandbox)'s trigger endpoint
   (`POST /sandbox/charges/{id}/trigger`) — manually push a charge
   through any state transition (confirm, partially pay, overpay,

@@ -90,8 +90,8 @@ validation_error`/`invalid_field` `KlapApiError` from the server, exactly
 as it would calling the REST endpoint directly. `environment` must match
 the calling key's own environment — a `test` key can never query `live`
 data or vice versa, regardless of what `resource`/`filters` say; a
-mismatch is `422 environment_mismatch`. Rate limited to 20 requests/min
-per IP across all of `/v1/metrics/*` — tighter than the general `/v1/*`
+mismatch is `422 environment_mismatch`. Rate limited to 60 requests/min
+per organization across all of `/v1/metrics/*` — tighter than the general `/v1/*`
 limit, since this can be an expensive aggregate query; over that is `429
 rate_limited`.
 
@@ -244,7 +244,7 @@ series).
 | `401` | `missing_api_key` / `invalid_api_key` | No key, or a key that's invalid/revoked |
 | `403` | `insufficient_scope` | Key is missing `metrics:read` and the matching `metrics:{resource}:read` scope |
 | `422` | `environment_mismatch` | Requested `environment` doesn't match the calling key's own environment |
-| `429` | `rate_limited` | Over 20 requests/min on `/v1/metrics/*` |
+| `429` | `rate_limited` | Over 60 requests/min per organization on `/v1/metrics/*` |
 
 Every error response shares the same `{ error: { code, message, param? }
 }` envelope — see [Errors](/errors) for the full catalog and the
