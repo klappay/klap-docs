@@ -2,8 +2,8 @@
 
 A **distribution** is the payout leg of a charge — the on-chain step
 where funds already confirmed as received get moved out to the
-merchant. Every charge address is a split contract (0xSplits or a
-fork/equivalent, depending on the network — see below); once a payment
+merchant. Every charge address is a split contract (0xSplits or an
+equivalent, depending on the network — see below); once a payment
 is detected, Klap calls that split's `distribute()` function to
 route the balance to its configured recipients (the merchant, plus
 Klap's own fee recipient). "Pending" means a split has a confirmed
@@ -13,12 +13,19 @@ same transition reflected on the charge itself as
 `settlementStatus: 'completed'` (see [Charges](/charges)).
 
 Which contract that actually is depends on the distribution's
-`network`: the official 0xSplits deployment on `base`, `optimism`,
-`polygon`, `ethereum`, `arbitrum`, `avalanche`, and `bnb`; Arc's own
-0xSplits fork on `arc`; and a separate, non-EVM contract on `tron`.
-Branch on `NETWORK_FAMILIES` from `@klappay/types` (`'evm-official'`,
-`'arc'`, `'tron'`) rather than assuming one ABI or address format for
-every network — see [Networks & tokens](/networks#network).
+`network`: the official 0xSplits v2.2 deployment on every EVM network
+(`base`, `optimism`, `polygon`, `ethereum`, `arbitrum`, `avalanche`,
+`bnb`, `arc`), and a separate, non-EVM contract on `tron`. Branch on
+`NETWORK_FAMILIES` from `@klappay/types` (`'evm-official'` or `'tron'`)
+rather than assuming one ABI or address format for every network — see
+[Networks & tokens](/networks#network).
+
+One Arc-specific caveat if you run your own keeper: USDC is Arc's
+native gas token, so call `distribute()` with USDC's ERC-20 address, not
+the native-token sentinel (`0xEeee…`). A native-sentinel call still
+pays every recipient correctly, but Klap may not attribute that payout
+to the distribution, so it can stay pending and the charge's
+`settlementStatus` may never reach `'completed'`.
 
 The reason this needs its own resource at all: the split's
 `distribute()` is **permissionless** — anyone can call it, not just

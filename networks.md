@@ -191,22 +191,20 @@ lands, `OPERATIONAL_NETWORKS` will again be the narrower one. Being in
 a `test` environment entirely.
 
 `EVM_NETWORKS` — every `Network` value except `tron`, which isn't EVM
-(Arc is, despite being its own split family below). Use this to guard
+(Arc is, and shares the `'evm-official'` split family below). Use this to guard
 any logic that assumes an EVM-style `0x` address/RPC; escrow, for
 instance, needs every accepted network to be in it.
 
-`NETWORK_FAMILIES` (`Record<Network, 'evm-official' | 'tron' | 'arc'>`)
+`NETWORK_FAMILIES` (`Record<Network, 'evm-official' | 'tron'>`)
 — which split-address family a network belongs to. A charge predicts one
 split address up front and reuses it on every network it accepts, which
 is only safe when they all derive it through the same split factory.
-Every network where 0xSplits officially deploys is `'evm-official'`;
-`arc` and `tron` each have their own factory, so `acceptedPayments` can
-only list networks from one family — mixing them is rejected with
-`400 validation_error`.
-
-TRON note: like any network, a TRON request can return
-`503 rpc_unavailable` transiently; retry with backoff rather than
-treating the pair as permanently unsupported.
+Every EVM network, Arc included, is `'evm-official'` (0xSplits' official
+contracts, same factory on every chain), so they can be mixed freely in
+one charge. `tron` has its own factory, so `acceptedPayments` can't mix
+it with an EVM network — that's rejected with `400 validation_error`.
+`@klappay/types` 6.0.0 removed `'arc'` from this union; code that
+switches on the family should drop that branch.
 
 `NETWORK_LABELS` — display names (`'Base'`, `'Optimism'`, ...) for UI
 use. `NETWORK_EXPLORERS` — each network's block explorer base URL

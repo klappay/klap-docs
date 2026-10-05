@@ -74,11 +74,11 @@ client-side).
 An `acceptedPayments` list can only mix networks that share one split
 factory — a charge predicts a single address up front and reuses it on
 every network it accepts, which is only safe when they all derive it the
-same way. In practice every network except `arc` and `tron` forms one
-group; `arc` and `tron` each have their own, so a list mixing them with
-each other or with the rest is rejected with `400 validation_error`
-(`NETWORK_FAMILIES` in `@klappay/types` tells you which family a network
-belongs to — see [Networks & tokens](/networks#network)).
+same way. In practice every EVM network (`arc` included) forms one
+group and can be mixed freely; `tron` has its own split contract, so a
+list mixing `tron` with any EVM network is rejected with
+`400 validation_error` (`NETWORK_FAMILIES` in `@klappay/types` tells you
+which family a network belongs to — see [Networks & tokens](/networks#network)).
 
 **Idempotency**: if you don't pass `idempotencyKey`, the SDK generates
 one for you automatically, making every `create()` call safe to retry
