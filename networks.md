@@ -91,8 +91,7 @@ symmetric:
 
 - **`live`** has both `USDC` and `USDT` on `base`, `optimism`,
   `polygon`, `ethereum`, `arbitrum`, `avalanche`, and `bnb`; `arc` has
-  `USDC` only (Circle's own chain has no `USDT` deployment); `tron` has
-  `USDT` only (no `USDC` deployment there yet). On `bnb`, both tokens
+  `USDC` only (Circle's own chain has no `USDT` deployment). On `bnb`, both tokens
   are Binance-Peg, not Circle/Tether deployments (see below) — they're
   still listed under `USDC`/`USDT` because that's what those symbols
   mean on BNB Chain in practice, just with a different trust model.
@@ -100,8 +99,7 @@ symmetric:
   - `base`, `optimism`, and `ethereum` each have a `test` environment
     with `USDC` only — none has an official Sepolia `USDT`, because
     Tether simply doesn't issue one there. A token-level gap. `arc`
-    likewise has `USDC` on its testnet, and `tron` has `USDT` on its
-    Nile testnet (no `USDC`).
+    likewise has `USDC` on its testnet.
   - `arbitrum`, `polygon`, and `avalanche` have no `test` environment
     at all yet, for *any* token — 0xSplits (the split-factory
     infrastructure Klap's charge addresses are built on) hasn't
@@ -164,8 +162,13 @@ address-only view derived from the same data — a present address alone
 doesn't mean a payment method is on offer, and test and live metadata
 must never fall back to each other, since they're different chains.
 
-TRON addresses aren't `0x`-prefixed: they're Base58 (`T...`). The
-`test` deployment of TRON's `USDT` is on its Nile testnet.
+**`tron` isn't accepting payments right now, in either environment.**
+It's still a valid `Network` value (so it typechecks, and filtering or
+reading by it works), but `GET /networks` doesn't list any TRON pair and
+`POST /charges` rejects one with `422 token_not_supported`. When it's
+enabled it will simply appear in `GET /networks` — another reason to
+build the picker from that response instead of from the `Network` type.
+TRON addresses aren't `0x`-prefixed: they're Base58 (`T...`).
 
 ### `Network`
 
@@ -186,9 +189,11 @@ and what's currently supported, not silently accepted and left
 unroutable. This isn't guaranteed to stay in lockstep with `Network` —
 the day a genuinely new chain is added to the type before its wiring
 lands, `OPERATIONAL_NETWORKS` will again be the narrower one. Being in
-`OPERATIONAL_NETWORKS` only means `live` works; it says nothing about
-`test` on its own — see the gaps above for exactly which networks lack
-a `test` environment entirely.
+`OPERATIONAL_NETWORKS` only means the schema accepts the network; it
+doesn't promise any pair on it is payable in a given environment (`tron`
+is in the list but currently isn't, and several networks lack a `test`
+environment entirely — see the gaps above). `GET /networks` is the
+answer to that question.
 
 `EVM_NETWORKS` — every `Network` value except `tron`, which isn't EVM
 (Arc is, and shares the `'evm-official'` split family below). Use this to guard
@@ -223,7 +228,7 @@ yourself: `${NETWORK_EXPLORERS[network]}/tx/${charge.txHash}`.
 | `avalanche` | USDC, USDT | none (no 0xSplits Fuji support) |
 | `bnb` | USDC, USDT (both Binance-Peg, 18 decimals) | none (no 0xSplits BNB testnet support) |
 | `arc` | USDC only (no USDT on Arc) | USDC |
-| `tron` | USDT only (no USDC yet) | USDT (Nile testnet) |
+| `tron` | none (not accepting payments right now) | none |
 
 This table is a snapshot for orientation only — it's exactly the kind
 of hardcoded matrix this page argues against relying on. Always confirm
