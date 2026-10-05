@@ -222,7 +222,7 @@ curl -X POST https://api.klappay.com/v1/charges \
     "amount": 49.9,
     "acceptedPayments": [{ "token": "USDC", "network": "base" }],
     "expiresIn": 3600,
-    "escrow": { "releaserAddress": "0xabc1234567890123456789012345678901234567" }
+    "escrow": { "releaserAddress": "0x4444444444444444444444444444444444444444" }
   }'
 ```
 
@@ -231,7 +231,7 @@ const charge = await klap.charges.create({
   amount: 49.9,
   acceptedPayments: [{ token: 'USDC', network: 'base' }],
   expiresIn: 3600,
-  escrow: { releaserAddress: '0xabc1234567890123456789012345678901234567' },
+  escrow: { releaserAddress: '0x4444444444444444444444444444444444444444' },
 })
 ```
 

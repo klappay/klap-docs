@@ -175,10 +175,9 @@ TRON addresses aren't `0x`-prefixed: they're Base58 (`T...`).
 `NetworkSchema`/`Network` — `'base' | 'optimism' | 'polygon' |
 'ethereum' | 'arbitrum' | 'avalanche' | 'bnb' | 'tron' | 'arc'`. Every one of these
 values is valid for reading/filtering (e.g. `ListChargesInput.network`)
-regardless of whether it's fully wired for writes. `solana` used to be
-part of this type but was removed entirely — not just left
-non-operational — once there was no near-term plan to wire it, so
-don't expect a deprecated-but-present value to linger indefinitely.
+regardless of whether it's fully wired for writes. A network that's
+dropped is removed from the type entirely rather than left behind as a
+deprecated value.
 
 `OPERATIONAL_NETWORKS` — the narrower list of networks actually wired
 end-to-end today (`base`, `arbitrum`, `optimism`, `polygon`, `ethereum`,

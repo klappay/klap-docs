@@ -177,9 +177,6 @@ explicitly revoked, not until some expiry date passes. That makes
 revocation, not expiry, the mechanism you actually rely on for taking
 a compromised key out of service.
 
-**Signing-key rotation** on Klap's side needs no action from you: your
-key keeps working exactly as it did before, with no cutover or redeploy.
-
 **Revocation** is the lever you control, from your dashboard. Once you
 revoke a key:
 

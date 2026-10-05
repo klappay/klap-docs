@@ -19,7 +19,6 @@ sequenceDiagram
     participant K as Klap API
     participant P as Payer
     participant A as Charge address (on-chain)
-    participant W as Distribution worker
 
     M->>K: POST /charges
     K-->>M: charge (status: pending, address, checkoutUrl)
@@ -27,8 +26,8 @@ sequenceDiagram
     P->>A: sends token directly to the charge's address
     A-->>K: transfer detected on-chain
     K-->>M: charge.confirmed (webhook + SSE)
-    Note over A,W: funds sit at the address until distributed —<br/>not instant, see "Settlement" below
-    W->>A: distribute()
+    Note over K,A: funds sit at the address until distributed —<br/>not instant, see "Settlement" below
+    K->>A: distribute()
     A-->>M: funds arrive in the merchant's wallet
     K-->>M: charge.settled (settlementStatus: completed)
 ```
@@ -71,8 +70,8 @@ the merchant has the money yet.** That's a separate, later step.
 
 Funds sitting at the charge's split address aren't automatically in
 your wallet — someone still has to call `distribute()` on that
-contract, which is its own on-chain transaction. Klap runs a
-background worker that does this for you, after a short grace period
+contract, which is its own on-chain transaction. Klap does this for
+you automatically, after a short grace period
 (a few minutes, to batch and avoid triggering a distribution on every
 single incoming transfer of a multi-part payment) — not because
 there's a queue or a manual step, just because "the transfer landed"
@@ -81,7 +80,7 @@ events with two different timestamps.
 
 This is why `charge.settlementStatus` exists separately from `status`,
 and why [Distributions](/distributions) — the list of payouts still
-waiting on that worker — is its own resource. If you only care "did the
+waiting on that call — is its own resource. If you only care "did the
 payer pay," watch `status`. If you specifically need "has the money
 actually arrived," watch `settlementStatus` (or use the Node SDK's
 `waitForSettlement()`).
@@ -118,6 +117,6 @@ distributed.
 - [Getting started](/getting-started) — create your first charge.
 - [Charges](/charges) — the full charge lifecycle and `Charge` shape.
 - [Distributions](/distributions) — tracking payouts still waiting on
-  the distribution worker.
+  `distribute()`.
 - [Real-time status (SSE)](/realtime) — how `status`/`settlementStatus`
   updates reach you without polling.

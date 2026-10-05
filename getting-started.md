@@ -75,10 +75,9 @@ curl https://api.klappay.com/v1/charges \
 Both calls create the identical resource: a `pending` charge with a
 unique on-chain `address` the payer sends funds to. Funds go straight
 to your own wallet — Klap never custodies them. `baseUrl` has no
-built-in default in the SDK, on purpose: there's no single hardcoded
-API host to silently fall back to, and a wrong silent default is a
-much harder bug to notice than a required field that fails loudly if
-you forget it.
+built-in default in the SDK — always pass `https://api.klappay.com/v1`
+explicitly; a required field that fails loudly if you forget it is
+easier to catch than a silent default.
 
 There's one thing the cURL version has to handle that the Node version
 doesn't: retries. If a request like this times out or the connection

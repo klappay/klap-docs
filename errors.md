@@ -180,20 +180,13 @@ curl https://api.klappay.com/v1/health
   "status": "ok",
   "version": "0.1.0",
   "timestamp": "2026-08-11T12:00:00.000Z",
-  "db": "ok",
-  "pendingWebhooks": 0,
-  "oldestPendingChargeAgeSeconds": null,
-  "lastContractWatcherEventAgeSeconds": null
+  "db": "ok"
 }
 ```
 
-The last three fields are operational signals beyond "is the process
-alive": `pendingWebhooks` (deliveries still awaiting a successful
-attempt), `oldestPendingChargeAgeSeconds` (age of the oldest still-unpaid
-charge, `null` if none), and `lastContractWatcherEventAgeSeconds` (seconds
-since the last on-chain payment event was observed, a cheap proxy for
-"is payment detection still working"; `null` when none has been observed
-yet).
+Build monitoring on the HTTP status code (or `status`/`db`). The
+response may carry additional operational fields beyond these; they're
+not part of the integration contract, so don't alert or branch on them.
 
 ## Types
 

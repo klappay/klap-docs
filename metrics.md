@@ -144,8 +144,8 @@ shape of before you query them:
   address.
 - **`distributorAddress`** (distributions) is the on-chain address that
   actually called `distribute()` for a `completed` distribution —
-  Klap's own operator address if settled by Klap's worker, a
-  community keeper's address if settled externally, `null` for every
+  Klap's address if Klap settled it, the keeper's address if a
+  third party did, `null` for every
   non-`completed` status.
 - **`processingStartedAt`** (distributions) is `null` until the first
   payout attempt, then overwritten on every retry — it reflects the

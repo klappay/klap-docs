@@ -30,7 +30,7 @@ to the distribution, so it can stay pending and the charge's
 The reason this needs its own resource at all: the split's
 `distribute()` is **permissionless** — anyone can call it, not just
 Klap, and whoever does earns a small `distributorFeePercent` cut of
-the balance for doing so. Klap's own worker races to claim every
+the balance for doing so. Klap itself races to claim every
 split automatically, typically well inside the 5-minute grace period
 before it's even discoverable here, but during that window a
 third-party keeper can beat it and claim the reward instead.
@@ -119,9 +119,9 @@ const distribution: PendingDistribution = PendingDistributionSchema.parse({
 | `network`/`token` | Which chain and stablecoin the split holds — same `network`/`token` enums as everywhere else in the API; see [Networks & tokens](/networks) for the current support matrix, including the BNB Chain caveat (its `USDC` and `USDT` are Binance-Peg with 18 decimals, not native Circle/Tether deployments — read the split's token decimals from `getTokenDeployment`, not a hardcoded 6). |
 | `recipients` | The **exact** array to pass to `distribute()` — the split contract only stores a hash of the recipient config on-chain, so the caller must supply the identical array to prove it matches. Always present, never a partial/reconstructed version. |
 | `distributorFeePercent` | Cut of the split balance paid to whoever calls `distribute()` first (e.g. `0.1` = 0.1%). Frozen at charge creation — same value for every distribution today, but not guaranteed to stay a constant forever. |
-| `estimatedRewardAmount` | An **estimate**, from the amount Klap detected on-chain — not a live balance read. Always read the split's real balance yourself before submitting a transaction, the same way Klap's own settlement worker does; a stale estimate is harmless, never a reason to skip that check. |
+| `estimatedRewardAmount` | An **estimate**, from the amount Klap detected on-chain — not a live balance read. Always read the split's real balance yourself before submitting a transaction, the same way Klap does before its own call; a stale estimate is harmless, never a reason to skip that check. |
 | `availableSince` | When this distribution entered its grace period. |
-| `graceEndsAt` | When Klap's own worker may claim it. Calling `distribute()` after this timestamp is still possible but increasingly likely to lose the race. |
+| `graceEndsAt` | When Klap itself may claim it. Calling `distribute()` after this timestamp is still possible but increasingly likely to lose the race. |
 
 The response envelope (`PaginatedPendingDistributionsSchema`):
 `{ data: PendingDistribution[], hasMore: boolean, nextCursor: string | null }`.
@@ -169,7 +169,7 @@ on `type`:
   period, or re-entered it after a failed claim attempt. Carries the
   full `distribution` (`PendingDistribution`, fully typed).
 - **`distribution.claimed`** — no longer claimable, settled by anyone
-  including Klap's own worker. Carries only the `splitAddress` —
+  including Klap itself. Carries only the `splitAddress` —
   and fires the moment a claim is *started*, not only once it
   finishes, so a keeper stops racing an attempt already in flight. If
   that attempt then fails and is rescheduled, `distribution.available`

@@ -123,7 +123,7 @@ Requires `recipients:write` and answers `204` with no body. A revoked
 recipient can no longer be referenced by a *new* split. Charges that
 already referenced it are **unaffected**: the address was resolved and
 frozen into the charge at creation, it isn't a live reference to the
-`Recipient` row.
+`Recipient`.
 
 Revoking is **not idempotent**. A second call fails with `404
 recipient_not_found` — the same error, deliberately indistinguishable

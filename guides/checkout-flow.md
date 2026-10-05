@@ -38,12 +38,12 @@ refresh needed once the payer sends the transfer.
       <rect x="170" y="140" width="10" height="10"/><rect x="140" y="170" width="10" height="10"/>
     </g>
   </svg>
-  <div style="text-align:center;font-size:11px;color:var(--vp-c-text-3);word-break:break-all;">0xA1b2C3d4E5f6...9a8b7c6d</div>
+  <div style="text-align:center;font-size:11px;color:var(--vp-c-text-3);word-break:break-all;">0x1111…1111</div>
 </div>
 <p style="text-align:center;font-size:13px;color:var(--vp-c-text-2);margin-top:-8px;">Illustrative mockup, not a live screenshot — real layout, placeholder data.</p>
 
-If your key doesn't have hosted checkout enabled (`checkoutUrl` comes
-back `null`), skip straight to building your own UI from `address`/
+If `checkoutUrl` comes back `null`, or you'd rather build your own
+UI, skip straight to building your own UI from `address`/
 `acceptedPayments` — steps 2 onward below don't change.
 
 ## 1. Create the charge
