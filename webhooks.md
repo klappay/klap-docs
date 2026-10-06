@@ -342,7 +342,13 @@ for await (const delivery of klap.webhooks.listAllDeliveries(webhookId)) {
 
 await klap.webhooks.retryDelivery(webhookId, deliveryId)
 // immediately retries a specific delivery, regardless of its normal retry schedule
+// resolves to undefined — the endpoint answers 202 with no body
 ```
+
+`@klappay/node` before 5.1.4 tried to parse that empty `202` body as
+JSON and threw `Unexpected end of JSON input` even though the retry had
+been accepted — upgrade if `retryDelivery()` is the one call in your
+integration that "fails" on success.
 
 | Method | Path (→ open in Playground) | Scope | Notes |
 |---|---|---|---|
