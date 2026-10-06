@@ -170,6 +170,11 @@ aren't exempt from signature verification, which is the point: your
 handler is exercised exactly as it would be in production, deployed or
 not.
 
+The same triggers are available to an AI assistant through the
+[MCP server](/mcp)'s `sandbox_trigger` tool ("mark that charge as
+confirmed, then show me its timeline") — test environment only; it's
+never registered against a live key.
+
 ## See also
 
 - [Charges](/charges) — the state machine sandbox triggers move a

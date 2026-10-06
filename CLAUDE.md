@@ -18,6 +18,7 @@ sub-sites.
 | `@klappay/types` | Zod schemas / TS types | `https://api.klappay.com/types/llms-full.txt` | `../klap-core/docs-types/*.md` |
 | REST API | Endpoints, params, responses | `https://api.klappay.com/v1/openapi.json` | same file, no local equivalent |
 | REST API (concepts) | Product/behavior narrative | — no llms.txt for this one | `../klap-core/docs/*.md` (only the public-facing files, see below) |
+| `@klappay/mcp` | MCP server for AI assistants (open source) | `https://mcp.klappay.com/llms-full.txt` | `../klap-mcp/docs/*.md` |
 
 **Prefer the local sibling repos when they exist on disk** (`../klap-node`,
 `../klap-core` relative to this repo) — their `.md` files are the actual
@@ -51,6 +52,7 @@ not a rediscovery, every time.
 | `errors.md` | `errors.md` | `errors-and-health.md` | — | path `/health` + shared error schema |
 | `realtime.md` | (`charges.md`'s wait methods, referenced not duplicated) | — | `realtime.md` | — |
 | `sdk/tree-shaking.md` | `tree-shaking.md` | — | — | — |
+| `mcp.md` | — (MCP source: `../klap-mcp/docs/*.md`; full refusal list linked, not duplicated) | — | — | — |
 
 ## Updating the docs
 

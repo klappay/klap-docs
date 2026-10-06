@@ -60,6 +60,13 @@ export default withMermaid(
             { text: 'Tree-shaking (Node SDK)', link: '/sdk/tree-shaking' },
           ],
         },
+
+        {
+          text: 'Tools',
+          items: [
+            { text: 'AI assistants (MCP)', link: '/mcp' },
+          ],
+        },
       ],
 
       search: {

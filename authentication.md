@@ -26,6 +26,13 @@ API endpoint for creating a key yourself; this is a one-time dashboard
 step per environment, not something your integration code does at
 runtime.
 
+Giving a key to an AI assistant follows the same rule: the
+[MCP server](/mcp) reads it from the file `klap login` writes on your
+machine rather than from the assistant's own config, and a live key it
+holds is read-only unless you explicitly opt in. Prefer a dedicated key
+scoped to what the assistant needs, so revoking it doesn't touch your
+production integration.
+
 ## Sending your API key
 
 Every authenticated request needs an `Authorization: Bearer` header

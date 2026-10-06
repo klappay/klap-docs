@@ -53,6 +53,9 @@ features:
   - title: Errors
     details: The typed error hierarchy across the REST API and the Node.js SDK.
     link: /errors
+  - title: AI assistants (MCP)
+    details: Let Claude, Cursor or any MCP client read charges, webhooks and metrics with your key — local, open source, read-only in live by default.
+    link: /mcp
 ---
 
 ## What this is

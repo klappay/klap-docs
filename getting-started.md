@@ -176,6 +176,8 @@ signature check and the parse in a single call).
   activity.
 - [Errors](/errors) — every error shape the API returns (and, if
   you're on the SDK, every error class it throws), and when.
+- [AI assistants (MCP)](/mcp) — let Claude, Cursor or any MCP client
+  inspect charges and webhooks, and drive test charges, with your key.
 
 ## For LLMs and agents
 
@@ -193,4 +195,9 @@ Each SDK publishes its own pair at the same paths on its own site:
 [`@klappay/types`](https://api.klappay.com/types/llms.txt),
 [`@klappay/cli`](https://cli.klappay.com/llms.txt),
 [`@klappay/checkout-kit`](https://node-checkout-sdk.klappay.com/llms.txt),
-and [`@klappay/one`](https://js-one.klappay.com/llms.txt).
+[`@klappay/one`](https://js-one.klappay.com/llms.txt),
+and [`@klappay/mcp`](https://mcp.klappay.com/llms.txt).
+
+`llms.txt` lets an agent *read* the docs. To let it *act* on your
+account — look up a charge, list failed webhook deliveries, create and
+sandbox-trigger a test charge — run the [MCP server](/mcp) instead.

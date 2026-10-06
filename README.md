@@ -41,6 +41,7 @@ from `.github/workflows/docs.yml` on every push to `main`.
 | `@klappay/cli` — command-line tool | [cli.klappay.com](https://cli.klappay.com) |
 | `@klappay/checkout-kit` — build a custom checkout | [node-checkout-sdk.klappay.com](https://node-checkout-sdk.klappay.com) |
 | `@klappay/one` — drop-in pay button | [js-one.klappay.com](https://js-one.klappay.com) |
+| `@klappay/mcp` — MCP server for AI assistants | [mcp.klappay.com](https://mcp.klappay.com) |
 | REST API reference | [api.klappay.com](https://api.klappay.com) |
 
 Contributors: `CLAUDE.md` documents how the site stays in sync with upstream sources.
