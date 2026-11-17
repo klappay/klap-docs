@@ -244,3 +244,8 @@ this table goes stale and the live endpoint doesn't.
 - [Authentication](/authentication) — `GET /networks` is one of the
   few routes that skips the scope check; still requires a valid,
   unrevoked, environment-matched key.
+- [USDC and USDT contract addresses](https://klappay.com/tools/usdc-usdt-contract-addresses)
+  — the mainnet USDC and USDT contracts on each network, with decimals,
+  checked on-chain in the browser.
+- [Stablecoin transfer cost](https://klappay.com/tools/stablecoin-transfer-cost)
+  — the live cost of one USDC or USDT transfer on each network.

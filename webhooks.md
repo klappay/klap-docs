@@ -401,7 +401,10 @@ consumes; see [Real-time status](/realtime) for the stream mechanics.
 To exercise just your handler's signature verification and payload
 parsing with no login at all, `klap webhooks trigger <event>` signs a
 fake webhook and delivers it straight to your local URL (full details at
-[cli.klappay.com](https://cli.klappay.com)).
+[cli.klappay.com](https://cli.klappay.com)). Without installing anything,
+the [webhook signature tester](https://klappay.com/tools/webhook-signature-tester)
+builds a signed sample delivery with a throwaway secret in the browser,
+plus a `curl` command that sends it to your endpoint.
 
 ## See also
 
@@ -414,3 +417,5 @@ fake webhook and delivers it straight to your local URL (full details at
   the REST error codes referenced above.
 - [Real-time status (SSE)](/realtime) — `GET /webhooks/listen`'s stream
   mechanics, shared with the charge- and distribution-event streams.
+- [Webhook signature tester](https://klappay.com/tools/webhook-signature-tester)
+  — a signed sample delivery and a `curl` command to check your verifier.
